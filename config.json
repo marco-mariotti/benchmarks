@@ -1,0 +1,4 @@
+{
+    "sample_sheet": "sample_sheet.csv",
+    "output_dir": "~/benchmark_pyranges"
+}
