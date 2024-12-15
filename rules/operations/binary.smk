@@ -13,7 +13,10 @@ rule binary:
         annotation = lambda x: get_file(x.annotation),
         reads = lambda x: get_file(x.reads),
     output:
-        "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}.bed"
+        result = "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}.bed",
+        benchmark = "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}.json",
+    benchmark:
+        "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}_benchmarks.tsv"
     run:
         import importlib
         module = importlib.import_module(f"scripts.binary.{wildcards.library}.{wildcards.operation}")
@@ -22,11 +25,16 @@ rule binary:
 
         import pyranges as pr
 
-        ann = pr.example_data.ncbi_gff
+        print("Reading")
+        ann = pr.read_gtf(input.annotation, nrows=10000)
+        print("Done reading annotatino")
+        reads = pr.read_bed(input.reads)
+        print("Done reading reads")
 
-        result = benchmarked_operation(
+        result, benchmarks = benchmarked_operation(
             annotation=ann,
-            reads=ann,
+            reads=reads,
         )
 
-        print(result["ResultObject"])
+        Path(output.result).write_text(str(result))
+        Path(output.benchmark).write_text(json.dumps(benchmarks, indent=4))

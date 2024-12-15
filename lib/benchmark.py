@@ -59,8 +59,7 @@ def benchmark(func: Callable) -> Callable:
         current_mb = current / 1024 / 1024  # MB
         peak_mb = peak / 1024 / 1024  # MB
 
-        return {
-            "ResultObject": result,
+        return result, {
             "Time": f"{execution_time:.4f}",
             "RSS": f"{rss_diff:.2f}",
             "PeakMemory": f"{peak_mb:.2f}",
