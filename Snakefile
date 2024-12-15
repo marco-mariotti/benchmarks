@@ -3,6 +3,12 @@ from pathlib import Path
 import pandas as pd
 
 import json
+import sys
+
+sys.path.insert(0, os.path.abspath("lib"))
+
+
+from lib.benchmark import benchmark
 
 CONFIGURATION_PATH = Path("config.json")
 
@@ -26,23 +32,18 @@ for rule_file in rule_files:
 annotation_files = [*sample_sheet[sample_sheet.Type == "Annotation"].Name]
 read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 
-print(
-        expand(
-            "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/intersection.bed",
+files_to_create = expand(
+            "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/intersection.bed",
             RESULTS_DIR=RESULTS_DIR,
             annotation=annotation_files,
             reads=read_files,
+            library=["pyranges"],
         )
-)
+
 
 rule all:
     input:
-        expand(
-            "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/intersection.bed",
-            RESULTS_DIR=RESULTS_DIR,
-            annotation=annotation_files,
-            reads=read_files,
-        )
+        files_to_create,
         # Path(WORKDIR, "gencode/annotation.gtf"),
         # Path(WORKDIR, "remc/H1_cell_line.bed")
 

@@ -11,13 +11,13 @@ rule download_hg38_comprehensive:
     output: 
         "{DATA_FOLDER}/gencode/annotation.gtf.gz"
     shell: 
-        "curl -O {HUMAN_GENOME} > {output[0]}"
+        "curl -o {output[0]} {HUMAN_GENOME}"
 
 rule download_h1_cell_line:
     output: 
         "{DATA_FOLDER}/remc/H1_cell_line.bed.gz"
     shell: 
-        "curl -O {H1_CELL_LINE} > {output[0]}"
+        "curl -o {output[0]} {H1_CELL_LINE}"
 
 
 rule gunzip:
