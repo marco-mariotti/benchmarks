@@ -17,24 +17,5 @@ rule binary:
         benchmark = "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}.json",
     benchmark:
         "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/{operation}_benchmarks.tsv"
-    run:
-        import importlib
-        module = importlib.import_module(f"scripts.binary.{wildcards.library}.{wildcards.operation}")
-
-        benchmarked_operation = benchmark(module.operation)
-
-        import pyranges as pr
-
-        print("Reading")
-        ann = pr.read_gtf(input.annotation, nrows=10000)
-        print("Done reading annotatino")
-        reads = pr.read_bed(input.reads)
-        print("Done reading reads")
-
-        result, benchmarks = benchmarked_operation(
-            annotation=ann,
-            reads=reads,
-        )
-
-        Path(output.result).write_text(str(result))
-        Path(output.benchmark).write_text(json.dumps(benchmarks, indent=4))
+    script:
+        "scripts/run_binary_op.py"
