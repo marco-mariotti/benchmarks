@@ -1,4 +1,10 @@
 {
     "sample_sheet": "sample_sheet.csv",
-    "output_dir": "~/benchmark_pyranges"
+    "output_dir": "~/benchmark_pyranges",
+    "library_to_language": {
+        "bioframe": "py",
+        "pyranges": "py",
+        "genomicranges": "R",
+        "bedtools": "sh"
+    }
 }

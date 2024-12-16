@@ -7,17 +7,15 @@ import sys
 
 sys.path.insert(0, os.path.abspath("lib"))
 
-
-from lib.benchmark import benchmark
-
 CONFIGURATION_PATH = Path("config.json")
 
-CONFIG = json.load(CONFIGURATION_PATH.open())
+configfile: CONFIGURATION_PATH
 
-sample_sheet = pd.read_csv(CONFIG["sample_sheet"])
+sample_sheet = pd.read_csv(config["sample_sheet"])
 
-WORKDIR = Path(CONFIG["output_dir"]).expanduser()
+WORKDIR = Path(config["output_dir"]).expanduser()
 RESULTS_DIR = Path(WORKDIR / "results")
+BENCHMARK_DIR = Path(WORKDIR / "results")
 DOWNLOAD_DIR = Path(WORKDIR / "downloads")
 
 rule_files = Path("rules").rglob("**/*.smk")
