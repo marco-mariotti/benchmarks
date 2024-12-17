@@ -1,6 +1,7 @@
 import importlib
 import json
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 from snakemake.script import Snakemake
 from snakemake.shell import shell
@@ -51,8 +52,8 @@ def _run_binary_operation_python(
 
     benchmarked_operation = benchmark(operation_module.operation)
 
-    ann = reader_module.read(annotation_file, nrows=10000)
-    reads = reader_module.read(reads_file, nrows=10000)
+    ann = reader_module.read(annotation_file)
+    reads = reader_module.read(reads_file)
 
     result, benchmarks = benchmarked_operation(
         annotation=ann,
@@ -68,7 +69,20 @@ def _run_binary_operation_shell(
     annotation_file: Path,
     reads_file: Path,
 ):
-    shell("sleep 1", bench_record=snakemake)
+    script_template = Path("scripts", "binary", library, f"{operation}.sh").read_text()
+
+    benchmarked_shell = benchmark(shell)
+    with NamedTemporaryFile("w+") as f:
+        output_command = f" | wc -l > {f.name}"
+        script = script_template.format(
+            input_file1=annotation_file,
+            input_file2=reads_file,
+            output_command=output_command,
+        )
+        benchmark_results = benchmarked_shell(script)[1]
+        result = Path(f.name).read_text().strip()
+
+    return result, benchmark_results
 
 
 if __name__ == "__main__":

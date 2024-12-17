@@ -6,8 +6,13 @@ def read(
     f: Path,
     nrows: int | None = None,
 ):
-    return bf.read_table(
+    df = bf.read_table(
         f,
         schema=f.suffix.removeprefix("."),
         nrows=nrows,
     )
+
+    if f.suffix == ".gtf":
+        df["end"] += 1
+
+    return df

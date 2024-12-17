@@ -1,5 +1,6 @@
 {
     "sample_sheet": "sample_sheet.csv",
+    "library_to_operations_mapping": "operations.tsv",
     "output_dir": "~/benchmark_pyranges",
     "library_to_language": {
         "bioframe": "py",

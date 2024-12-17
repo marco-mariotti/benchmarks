@@ -26,14 +26,20 @@ for rule_file in rule_files:
 annotation_files = [*sample_sheet[sample_sheet.Type == "Annotation"].Name]
 read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 
-files_to_create = expand(
-            "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/intersection.bed",
-            RESULTS_DIR=RESULTS_DIR,
-            annotation=annotation_files,
-            reads=read_files,
-            operation="intersection",
-            library=["pyranges"],
-        )
+library_to_operations_mapping = pd.read_csv(config["library_to_operations_mapping"])
+
+files_to_create = []
+for library, operation in zip(library_to_operations_mapping.Library, library_to_operations_mapping.Operation):
+    files_to_create.extend(
+        expand(
+                "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/intersection.bed",
+                RESULTS_DIR=RESULTS_DIR,
+                annotation=annotation_files,
+                reads=read_files,
+                operation=operation,
+                library=library,
+            )
+    )
 
 
 rule all:
