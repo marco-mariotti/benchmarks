@@ -29,6 +29,3 @@ rule gunzip:
         path = "|".join([str(Path(p).with_suffix("")) for p in sample_sheet.OutPath])
     shell:
         'gunzip -c {input} | grep -v "^#" > {output}'  # need to grep to remove comment lines for bioframe
-
-    
-# rule generate_random_data:

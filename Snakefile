@@ -23,25 +23,19 @@ rule_files = Path("rules").rglob("**/*.smk")
 for rule_file in rule_files:
     include: rule_file
 
-
-
-
-
 annotation_files = [*sample_sheet[sample_sheet.Type == "Annotation"].Name]
 read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 
 files_to_create = expand(
-            "{RESULTS_DIR}/results/binary/intersection/{annotation}/{reads}/{library}/intersection.bed",
+            "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/intersection.bed",
             RESULTS_DIR=RESULTS_DIR,
             annotation=annotation_files,
             reads=read_files,
+            operation="intersection",
             library=["pyranges"],
         )
 
 
 rule all:
     input:
-        files_to_create,
-        # Path(WORKDIR, "gencode/annotation.gtf"),
-        # Path(WORKDIR, "remc/H1_cell_line.bed")
-
+        files_to_create
