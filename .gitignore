@@ -1,4 +1,6 @@
 .snakemake
 *.pyc
 *.gz
+.RData
+.RHistory
 

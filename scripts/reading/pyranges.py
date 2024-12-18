@@ -11,23 +11,21 @@ def read(
     match f.suffix:
         case ".gtf":
             df = pd.read_table(
-                    f,
-                    names=[
-                        "Chromosome",
-                        "Source",
-                        "Feature",
-                        "Start",
-                        "End",
-                        "Score",
-                        "Strand",
-                        "Frame",
-                        "Attributes",
-                    ],
-                )
-            df["End"] = df.End + 1
-            return pr.PyRanges(
-                df
+                f,
+                names=[
+                    "Chromosome",
+                    "Source",
+                    "Feature",
+                    "Start",
+                    "End",
+                    "Score",
+                    "Strand",
+                    "Frame",
+                    "Attributes",
+                ],
             )
+            df["End"] = df.End + 1
+            return pr.PyRanges(df)
         case ".bed":
             return pr.read_bed(f, nrows=nrows)
         case _:

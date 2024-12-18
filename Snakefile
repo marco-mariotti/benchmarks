@@ -29,13 +29,26 @@ read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 library_to_operations_mapping = pd.read_csv(config["library_to_operations_mapping"])
 
 files_to_create = []
-for library, operation in zip(library_to_operations_mapping.Library, library_to_operations_mapping.Operation):
+binary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "binary"]
+for library, operation in zip(binary_operations.Library, binary_operations.Operation):
     files_to_create.extend(
         expand(
-                "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/intersection.bed",
+                "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/result.txt",
                 RESULTS_DIR=RESULTS_DIR,
                 annotation=annotation_files,
                 reads=read_files,
+                operation=operation,
+                library=library,
+            )
+    )
+
+unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
+for library, operation in zip(unary_operations.Library, unary_operations.Operation):
+    files_to_create.extend(
+        expand(
+                "{RESULTS_DIR}/results/unary/{operation}/{infile}/{library}/result.txt",
+                RESULTS_DIR=RESULTS_DIR,
+                infile=annotation_files + read_files,
                 operation=operation,
                 library=library,
             )
@@ -45,3 +58,12 @@ for library, operation in zip(library_to_operations_mapping.Library, library_to_
 rule all:
     input:
         files_to_create
+
+
+
+def remove_suffix(p: Path) -> Path:
+    return p.with_suffix("")
+
+
+def get_file(name: str) -> Path:
+    return DOWNLOAD_DIR / Path(sample_sheet[sample_sheet.Name == name].OutPath.iloc[0]).with_suffix("")

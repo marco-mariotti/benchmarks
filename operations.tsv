@@ -1,4 +1,7 @@
-Library,Operation
-granges,intersection
-pyranges,intersection
-bioframe,intersection
+Library,Operation,Type
+bedtools,intersection,binary
+pyranges,intersection,binary
+bioframe,intersection,binary
+bedtools,merge,unary
+pyranges,merge,unary
+bioframe,merge,unary

@@ -34,10 +34,19 @@ def run_binary_operation(
                 annotation_file=annotation_file,
                 reads_file=reads_file,
             )
+        case "R":
+            result, benchmarks = _run_binary_operation_r(
+                library=library,
+                operation=operation,
+                annotation_file=annotation_file,
+                reads_file=reads_file,
+            )
         case _:
             raise NotImplementedError(
                 f"There is no runner for {language} binary operations yet."
             )
+    benchmarks["operation"] = operation
+    benchmarks["library"] = library
     return result, benchmarks
 
 
@@ -64,6 +73,28 @@ def _run_binary_operation_python(
 
 
 def _run_binary_operation_shell(
+    library: str,
+    operation: str,
+    annotation_file: Path,
+    reads_file: Path,
+):
+    script_template = Path("scripts", "binary", library, f"{operation}.sh").read_text()
+
+    benchmarked_shell = benchmark(shell)
+    with NamedTemporaryFile("w+") as f:
+        output_command = f" | wc -l > {f.name}"
+        script = script_template.format(
+            input_file1=annotation_file,
+            input_file2=reads_file,
+            output_command=output_command,
+        )
+        benchmark_results = benchmarked_shell(script)[1]
+        result = Path(f.name).read_text().strip()
+
+    return result, benchmark_results
+
+
+def _run_binary_operation_r(
     library: str,
     operation: str,
     annotation_file: Path,
