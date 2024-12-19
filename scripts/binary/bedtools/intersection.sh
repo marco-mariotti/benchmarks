@@ -1,1 +1,1 @@
-bedtools intersect -a {input_file1} -b {input_file2} {output_command}
+bedtools intersect -a $1 -b $2

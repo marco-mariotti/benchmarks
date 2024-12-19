@@ -5,6 +5,12 @@ import pandas as pd
 import json
 import sys
 
+from lib.helpers import get_run_cmd, library_to_language
+
+
+TIME_COMMAND = """gtime -f '{{"Elapsed": "%e", "User": "%U", "System": "%S", "MaxRSS_kB": "%M"}}' -o {output.benchmark}"""
+
+
 sys.path.insert(0, os.path.abspath("lib"))
 
 CONFIGURATION_PATH = Path("config.json")

@@ -56,18 +56,7 @@ def _run_binary_operation_python(
     annotation_file: Path,
     reads_file: Path,
 ):
-    operation_module = importlib.import_module(f"scripts.binary.{library}.{operation}")
-    reader_module = importlib.import_module(f"scripts.reading.{library}")
-
-    benchmarked_operation = benchmark(operation_module.operation)
-
-    ann = reader_module.read(annotation_file)
-    reads = reader_module.read(reads_file)
-
-    result, benchmarks = benchmarked_operation(
-        annotation=ann,
-        reads=reads,
-    )
+    shell()
 
     return result, benchmarks
 

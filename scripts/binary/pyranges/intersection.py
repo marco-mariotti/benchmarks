@@ -1,9 +1,12 @@
-import pyranges as pr
+from lib.helpers import get_files, write_result
+
+annotations, reads = get_files("pyranges")
+
+df = annotations.intersect(reads, strand_behavior="ignore")
+
+write_result("binary", str(df))
 
 
-def operation(
-    *,
-    annotation: pr.PyRanges,
-    reads: pr.PyRanges,
-):
-    return annotation.intersect(reads, strand_behavior="ignore")
+
+
+
