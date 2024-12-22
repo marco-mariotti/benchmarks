@@ -1,14 +1,17 @@
 
+source("lib/helpers.R")
+source("scripts/reading/genomicranges.R")
 
-read_gtf_raw <- function(gtf_file) {
-  df <- read.table(gtf_file, sep = "\t", comment.char = "#",
-                   quote = "", header = FALSE, stringsAsFactors = FALSE)
-  colnames(df) <- c("seqname", "source", "feature", "start", "end", 
-                    "score", "strand", "frame", "attributes")
-  gr <- makeGRangesFromDataFrame(df, keep.extra.columns = TRUE,
-                                 seqnames.field = "seqname",
-                                 start.field = "start",
-                                 end.field = "end",
-                                 strand.field = "strand")
-  return(gr)
-}
+files <- get_arguments()
+
+annotations = read_genomic_file(files$annotation_file)
+reads = read_genomic_file(files$read_file)
+
+hits <- findOverlaps(annotations, reads, ignore.strand = TRUE)
+
+# Get the left side with duplicates if multiple overlaps occur
+# queryHits(hits) returns the indices of gr1 that overlap gr2
+result <- annotations[queryHits(hits)]
+
+
+capture.output(print(result), file = files$outfile)

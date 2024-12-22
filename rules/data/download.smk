@@ -26,6 +26,6 @@ rule gunzip:
     output:
         "{DATA_FOLDER}/{path}"
     wildcard_constraints:
-        path = "|".join([str(Path(p).with_suffix("")) for p in sample_sheet.OutPath])
+        path = "|".join([str(Path(p).with_suffix("")) for p, t in zip(sample_sheet.OutPath, sample_sheet.Type) if t != "Random"])
     shell:
         'gunzip -c {input} | grep -v "^#" > {output}'  # need to grep to remove comment lines for bioframe

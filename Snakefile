@@ -26,39 +26,43 @@ DOWNLOAD_DIR = Path(WORKDIR / "downloads")
 
 rule_files = Path("rules").rglob("**/*.smk")
 
+annotation_files = [*sample_sheet[sample_sheet.Type == "Annotation"].Name]
+read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
+random_files = [*sample_sheet[sample_sheet.Type == "Random"].Name]
+
+library_to_operations_mapping = pd.read_csv(config["library_to_operations_mapping"])
+binary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "binary"]
+
 for rule_file in rule_files:
     include: rule_file
 
-annotation_files = [*sample_sheet[sample_sheet.Type == "Annotation"].Name]
-read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 
-library_to_operations_mapping = pd.read_csv(config["library_to_operations_mapping"])
 
 files_to_create = []
-binary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "binary"]
 for library, operation in zip(binary_operations.Library, binary_operations.Operation):
     files_to_create.extend(
         expand(
-                "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/result.txt",
+                "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
                 RESULTS_DIR=RESULTS_DIR,
-                annotation=annotation_files,
-                reads=read_files,
                 operation=operation,
                 library=library,
+                genome=["proteome"],
+                nrows=100_000,
+                maxlength=100,
             )
     )
 
-unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
-for library, operation in zip(unary_operations.Library, unary_operations.Operation):
-    files_to_create.extend(
-        expand(
-                "{RESULTS_DIR}/results/unary/{operation}/{infile}/{library}/result.txt",
-                RESULTS_DIR=RESULTS_DIR,
-                infile=annotation_files + read_files,
-                operation=operation,
-                library=library,
-            )
-    )
+# unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
+# for library, operation in zip(unary_operations.Library, unary_operations.Operation):
+#     files_to_create.extend(
+#         expand(
+#                 "{RESULTS_DIR}/results/unary/{operation}/{infile}/{library}/result.txt",
+#                 RESULTS_DIR=RESULTS_DIR,
+#                 infile=annotation_files + read_files,
+#                 operation=operation,
+#                 library=library,
+#             )
+#     )
 
 
 rule all:

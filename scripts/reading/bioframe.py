@@ -1,4 +1,5 @@
 from pathlib import Path
+import pandas as pd
 import bioframe as bf
 
 
@@ -8,7 +9,7 @@ def read(
 ):
     df = bf.read_table(
         f,
-        schema=f.suffix.removeprefix("."),
+        schema="bed3",
         nrows=nrows,
     )
 
