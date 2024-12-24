@@ -1,1 +1,1 @@
-bedtools sort -i {infile} | bedtools merge -i - {output_command}
+bedtools sort -i $1 | bedtools merge -d -1 -i -

@@ -16,6 +16,7 @@ def library_to_language(library: str) -> str:
     print(get_config()["library_to_language"].get(library))
     return get_config()["library_to_language"].get(library)
 
+
 def get_run_cmd(library: str, command: str) -> str:
     match language := library_to_language(library=library):
         case "py":
@@ -27,7 +28,7 @@ def get_run_cmd(library: str, command: str) -> str:
             return "Rscript"
     msg = f"Could not find runner for language {language}"
     raise AssertionError(msg)
-    
+
 
 def get_files(library: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     if library == "bioframe":
@@ -40,6 +41,16 @@ def get_files(library: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     return annotations, reads
 
 
+def get_file(library: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if library == "bioframe":
+        from scripts.reading.bioframe import read
+    elif library == "pyranges":
+        from scripts.reading.pyranges import read
+
+    annotations = read(Path(sys.argv[1]))
+    return annotations
+
+
 def write_result(operation: str, result: str) -> None:
     if operation == "binary":
         f = sys.argv[3]
@@ -47,4 +58,3 @@ def write_result(operation: str, result: str) -> None:
         f = sys.argv[2]
 
     Path(f).write_text(result)
-    

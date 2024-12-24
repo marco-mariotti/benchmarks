@@ -8,7 +8,7 @@ import sys
 from lib.helpers import get_run_cmd, library_to_language
 
 
-TIME_COMMAND = """gtime -f '{{"Elapsed": "%e", "User": "%U", "System": "%S", "MaxRSS_kB": "%M"}}' -o {output.benchmark}"""
+TIME_COMMAND = """gtime -f '{{"Elapsed": "%e", "User": "%U", "System": "%S", "MaxRSS_kB": "%M", "Operation": "{wildcards.operation}", "Library": "{wildcards.library}", "Genome": "{wildcards.genome}", "NumberRows": "{wildcards.nrows}", "MaxLength": "{wildcards.maxlength}"}}' -o {output.benchmark}"""
 
 
 sys.path.insert(0, os.path.abspath("lib"))
@@ -31,7 +31,10 @@ read_files = [*sample_sheet[sample_sheet.Type == "Reads"].Name]
 random_files = [*sample_sheet[sample_sheet.Type == "Random"].Name]
 
 library_to_operations_mapping = pd.read_csv(config["library_to_operations_mapping"])
+unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
 binary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "binary"]
+
+genome_to_parameters_mapping = pd.read_csv(config["parameters_file"])
 
 for rule_file in rule_files:
     include: rule_file
@@ -39,18 +42,28 @@ for rule_file in rule_files:
 
 
 files_to_create = []
-for library, operation in zip(binary_operations.Library, binary_operations.Operation):
-    files_to_create.extend(
-        expand(
-                "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
-                RESULTS_DIR=RESULTS_DIR,
-                operation=operation,
-                library=library,
-                genome=["proteome"],
-                nrows=100_000,
-                maxlength=100,
-            )
-    )
+for operation_type, library, operation in zip(
+    library_to_operations_mapping.Type,
+    library_to_operations_mapping.Library,
+    library_to_operations_mapping.Operation,
+):
+    for genome, number_reads, read_maxlength in zip(
+            genome_to_parameters_mapping.Genome,
+            genome_to_parameters_mapping.NumberReads,
+            genome_to_parameters_mapping.ReadMaxLength,
+        ):
+        files_to_create.extend(
+            expand(
+                    "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
+                    RESULTS_DIR=RESULTS_DIR,
+                    operation=operation,
+                    library=library,
+                    genome=genome,
+                    nrows=number_reads,
+                    maxlength=read_maxlength,
+                    operation_type=operation_type,
+                )
+        )
 
 # unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
 # for library, operation in zip(unary_operations.Library, unary_operations.Operation):

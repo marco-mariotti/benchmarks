@@ -2,10 +2,10 @@
 source("lib/helpers.R")
 source("scripts/reading/genomicranges.R")
 
-files <- get_arguments()
+files <- get_binary_arguments()
 
-annotations = read_genomic_file(files$annotation_file)
-reads = read_genomic_file(files$read_file)
+annotations <- read_genomic_file(files$annotation_file)
+reads <- read_genomic_file(files$read_file)
 
 hits <- findOverlaps(annotations, reads, ignore.strand = TRUE)
 

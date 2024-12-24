@@ -1,8 +1,9 @@
+from lib.helpers import get_file, write_result
 import pyranges as pr
 
+df = get_file("pyranges")
+print(df)
 
-def operation(
-    *,
-    df: pr.PyRanges,
-):
-    return df.merge_overlaps()
+df = df.merge_overlaps()
+
+write_result("unary", str(df))

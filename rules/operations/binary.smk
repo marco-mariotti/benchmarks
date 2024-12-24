@@ -40,14 +40,15 @@ rule binary_shell:
 
 rule binary_r:
     wildcard_constraints:
-        library = "|".join([k for k, v in config["library_to_language"].items() if v == "R"])
+        library = "|".join([k for k, v in config["library_to_language"].items() if v == "R"]),
+        operation = "|".join(binary_operations.Operation)
     input:
-        annotation = lambda x: get_file(x.annotation),
-        reads = lambda x: get_file(x.reads),
+        annotation = str(DOWNLOAD_DIR) + "/generated/annotation/{genome}/{nrows}/{maxlength}.bed",
+        bed_file = str(DOWNLOAD_DIR) + "/generated/reads/{genome}/{nrows}/{maxlength}.bed"
     output:
-        result = "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/result.txt",
-        benchmark = "{RESULTS_DIR}/results/binary/{operation}/{annotation}/{reads}/{library}/benchmark.json",
+        result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
+        benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
         script = "scripts/binary/{wildcards.library}/{wildcards.operation}"
-        cmd = f"{TIME_COMMAND} Rscript {script}.R {input.annotation} {input.reads} {output.result}"
+        cmd = f"{TIME_COMMAND} Rscript {script}.R {input.annotation} {input.bed_file} {output.result}"
         shell(cmd)

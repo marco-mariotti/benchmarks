@@ -2,6 +2,8 @@ Library,Operation,Type
 bedtools,intersection,binary
 pyranges,intersection,binary
 bioframe,intersection,binary
+genomicranges,intersection,binary
 bedtools,merge,unary
 pyranges,merge,unary
 bioframe,merge,unary
+genomicranges,merge,unary

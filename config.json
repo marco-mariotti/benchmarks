@@ -7,5 +7,6 @@
         "pyranges": "py",
         "genomicranges": "R",
         "bedtools": "sh"
-    }
+    },
+    "parameters_file": "parameters.tsv"
 }

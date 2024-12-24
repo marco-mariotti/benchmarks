@@ -4,9 +4,4 @@ annotations, reads = get_files("pyranges")
 
 df = annotations.overlap(reads, strand_behavior="ignore", multiple="all")
 
-write_result("binary", df)
-
-
-
-
-
+write_result("binary", str(df))
