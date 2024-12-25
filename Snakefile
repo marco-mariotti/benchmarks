@@ -36,11 +36,6 @@ binary_operations = library_to_operations_mapping[library_to_operations_mapping.
 
 genome_to_parameters_mapping = pd.read_csv(config["parameters_file"])
 
-for rule_file in rule_files:
-    include: rule_file
-
-
-
 files_to_create = []
 for operation_type, library, operation in zip(
     library_to_operations_mapping.Type,
@@ -65,6 +60,12 @@ for operation_type, library, operation in zip(
                 )
         )
 
+for rule_file in rule_files:
+    include: rule_file
+
+
+
+
 # unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
 # for library, operation in zip(unary_operations.Library, unary_operations.Operation):
 #     files_to_create.extend(
@@ -80,7 +81,7 @@ for operation_type, library, operation in zip(
 
 rule all:
     input:
-        files_to_create
+        RESULTS_DIR / "collected_results.csv"
 
 
 
