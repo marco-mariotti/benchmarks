@@ -10,4 +10,4 @@ df = df.dropna(subset=["start_", "end_", "chrom_"]).drop(
     columns=[c for c in df.columns if c.endswith("_")], axis="columns"
 )
 
-write_result("binary", str(df))
+write_result("binary", str(len(df)))
