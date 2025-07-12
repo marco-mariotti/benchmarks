@@ -8,9 +8,6 @@ import sys
 from lib.helpers import get_run_cmd, library_to_language
 
 
-TIME_COMMAND = """gtime -f '{{"Elapsed": "%e", "User": "%U", "System": "%S", "MaxRSS_kB": "%M", "Operation": "{wildcards.operation}", "Library": "{wildcards.library}", "Genome": "{wildcards.genome}", "NumberRows": "{wildcards.nrows}", "MaxLength": "{wildcards.maxlength}"}}' -o {output.benchmark}"""
-
-
 sys.path.insert(0, os.path.abspath("lib"))
 
 CONFIGURATION_PATH = Path("config.json")
@@ -49,7 +46,7 @@ for operation_type, library, operation in zip(
         ):
         files_to_create.extend(
             expand(
-                    "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
+                    "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json",
                     RESULTS_DIR=RESULTS_DIR,
                     operation=operation,
                     library=library,
@@ -62,21 +59,6 @@ for operation_type, library, operation in zip(
 
 for rule_file in rule_files:
     include: rule_file
-
-
-
-
-# unary_operations = library_to_operations_mapping[library_to_operations_mapping.Type == "unary"]
-# for library, operation in zip(unary_operations.Library, unary_operations.Operation):
-#     files_to_create.extend(
-#         expand(
-#                 "{RESULTS_DIR}/results/unary/{operation}/{infile}/{library}/result.txt",
-#                 RESULTS_DIR=RESULTS_DIR,
-#                 infile=annotation_files + read_files,
-#                 operation=operation,
-#                 library=library,
-#             )
-#     )
 
 
 rule all:

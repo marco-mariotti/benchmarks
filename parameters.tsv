@@ -11,18 +11,6 @@ hg38,10_000,1000
 hg38,100_000,1000
 hg38,1_000_000,1000
 hg38,10_000_000,1000
-hg38_noncanonical,10_000,10
-hg38_noncanonical,100_000,10
-hg38_noncanonical,1_000_000,10
-hg38_noncanonical,10_000_000,10
-hg38_noncanonical,10_000,100
-hg38_noncanonical,100_000,100
-hg38_noncanonical,1_000_000,100
-hg38_noncanonical,10_000_000,100
-hg38_noncanonical,10_000,1000
-hg38_noncanonical,100_000,1000
-hg38_noncanonical,1_000_000,1000
-hg38_noncanonical,10_000_000,1000
 proteome,10_000,10
 proteome,100_000,10
 proteome,1_000_000,10
@@ -31,3 +19,7 @@ proteome,10_000,100
 proteome,100_000,100
 proteome,1_000_000,100
 proteome,10_000_000,100
+proteome,10_000,1000
+proteome,100_000,1000
+proteome,1_000_000,1000
+proteome,10_000_000,1000

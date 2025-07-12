@@ -7,6 +7,7 @@ files <- get_binary_arguments()
 annotations <- read_genomic_file(files$annotation_file)
 reads <- read_genomic_file(files$read_file)
 
+
 common_seqlevels <- intersect(seqlevels(reads), seqlevels(annotations))
 reads <- keepSeqlevels(reads, common_seqlevels, pruning.mode = "coarse")
 annotations <- keepSeqlevels(annotations, common_seqlevels, pruning.mode = "coarse")

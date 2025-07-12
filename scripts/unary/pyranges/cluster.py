@@ -4,6 +4,6 @@ import pyranges as pr
 df = get_file("pyranges")
 print(df)
 
-df = df.merge_overlaps()
+df = df.cluster()
 
 write_result("unary", str(df))

@@ -1,6 +1,13 @@
+from helpers import run_case 
+
 
 print("|".join([k for k, v in config["library_to_language"].items() if v == "py"]))
 print("|".join(binary_operations.Operation))
+
+#     number_rows: int,
+#     library: str,
+#     genome: str,
+#     max_length: int,
 
 rule binary_python:
     input:
@@ -13,11 +20,24 @@ rule binary_python:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        module = "scripts.binary.{wildcards.library}.{wildcards.operation}"
+        module = f"scripts.binary.{wildcards.library}.{wildcards.operation}"
+        print(subprocess.call("which python", shell=True))
+        print(subprocess.call("python --version", shell=True))
 
-        cmd = f"{TIME_COMMAND} python -m {module} {input.annotation} {input.bed_file} {output.result}"
+        cmd = f"python -m {module} {input.annotation} {input.bed_file} {output.result}"
 
-        shell(cmd)
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )
+
+
 
 
 rule binary_shell:
@@ -31,11 +51,20 @@ rule binary_shell:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        script = "scripts/binary/{wildcards.library}/{wildcards.operation}"
-        write_output_cmd = f" | tee >(wc -l > {output.result}.tmp) | tail > {output.result}"
-        cmd = f"{TIME_COMMAND} bash {script}.sh {input.annotation} {input.bed_file} {write_output_cmd}"
-        shell(cmd)
-        shell(f"cat {output.result}.tmp >> {output.result}")
+        script = f"scripts/binary/{wildcards.library}/{wildcards.operation}"
+        write_output_cmd = f" | tail > {output.result}"
+        cmd = f"bash {script}.sh {input.annotation} {input.bed_file} {write_output_cmd}"
+
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )
 
 
 rule binary_r:
@@ -49,6 +78,15 @@ rule binary_r:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        script = "scripts/binary/{wildcards.library}/{wildcards.operation}"
-        cmd = f"{TIME_COMMAND} Rscript {script}.R {input.annotation} {input.bed_file} {output.result}"
-        shell(cmd)
+        script = f"scripts/binary/{wildcards.library}/{wildcards.operation}"
+        cmd = f"Rscript {script}.R {input.annotation} {input.bed_file} {output.result}"
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )

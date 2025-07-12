@@ -1,0 +1,1 @@
+bedtools sort -i $1 | bedtools cluster -d -1 -i -

@@ -12,7 +12,10 @@ rule create_benchmark_df:
         for f in input:
             f = Path(f).parent / "benchmark.json"
             print(f)
-            rowdicts.append(json.loads(f.read_text()))
+            text = json.loads(f.read_text())
+            print(text)
+            rowdicts.append(text)
 
         df = pd.DataFrame.from_records(rowdicts)
+        df = df.drop(["stderr", "cmd"], axis=1)
         df.to_csv(output[0], index=None)

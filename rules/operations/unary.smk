@@ -10,11 +10,20 @@ rule unary_python:
         result = "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        module = "scripts.unary.{wildcards.library}.{wildcards.operation}"
+        module = f"scripts.unary.{wildcards.library}.{wildcards.operation}"
 
-        cmd = f"{TIME_COMMAND} python -m {module} {input} {output.result}"
+        cmd = f"python -m {module} {input} {output.result}"
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )
 
-        shell(cmd)
 
 
 rule unary_shell:
@@ -28,11 +37,20 @@ rule unary_shell:
         result = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        script = "scripts/unary/{wildcards.library}/{wildcards.operation}"
-        write_output_cmd = f" | tee >(wc -l > {output.result}.tmp) | tail > {output.result}"
-        cmd = f"{TIME_COMMAND} bash {script}.sh {input[0]} {write_output_cmd}"
-        shell(cmd)
-        shell(f"cat {output.result}.tmp >> {output.result}")
+        script = f"scripts/unary/{wildcards.library}/{wildcards.operation}"
+        write_output_cmd = f" | tail > {output.result}"
+        cmd = f"bash {script}.sh {input[0]} {write_output_cmd}"
+
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )
 
 
 rule unary_r:
@@ -45,6 +63,15 @@ rule unary_r:
         result = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
     run:
-        script = "scripts/unary/{wildcards.library}/{wildcards.operation}"
-        cmd = f"{TIME_COMMAND} Rscript {script}.R {input[0]} {output.result}"
-        shell(cmd)
+        script = f"scripts/unary/{wildcards.library}/{wildcards.operation}"
+        cmd = f"Rscript {script}.R {input[0]} {output.result}"
+        run_case(
+            cmd,
+            benchmark_file=output.benchmark,
+            result_file=output.result,
+            number_rows=wildcards.nrows,
+            library=wildcards.library,
+            genome=wildcards.genome,
+            max_length=wildcards.maxlength,
+            operation=wildcards.operation,
+        )
