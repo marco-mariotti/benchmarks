@@ -70,6 +70,14 @@ from pathlib import Path
 
 import psutil
 
+import json
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import psutil
+
 # ───── user-tunable limits ────────────────────────────────────────────────────
 LIMIT_MB = 32_000  # hard RSS ceiling in MiB
 TIMEOUT_S = 900  # wall-clock limit in seconds
@@ -91,9 +99,9 @@ def run_case(
     proc = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
         shell=True,
-        executable="/bin/bash",
     )
     ps = psutil.Process(proc.pid)
     start = time.perf_counter()
@@ -102,8 +110,6 @@ def run_case(
 
     try:
         while True:
-            line = proc.stdout.readline()
-
             if proc.poll() is not None:  # child has finished
                 break
 
@@ -146,7 +152,7 @@ def run_case(
         "seconds": round(time.perf_counter() - start, 3),
         "peak_rss": peak_rss,  # bytes
         "rc": rc,
-        "stderr": "",
+        "stderr": stderr if len(stderr) < 500 else stderr[:250] + "\n...\n" + stderr[-250:],
         "number_rows": number_rows,
         "library": library,
         "genome": genome,
