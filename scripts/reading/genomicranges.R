@@ -1,6 +1,7 @@
 library(tools)  # for file_ext()
 library(GenomicRanges)
 library(rtracklayer)
+library(GenomeInfoDb)
 
 
 read_genomic_file <- function(filepath) {
