@@ -7,8 +7,10 @@ rule unary_python:
     input:
         str(DOWNLOAD_DIR) + "/generated/annotation/{genome}/{nrows}/{maxlength}.bed"
     output:
-        result = "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
-        benchmark = "{RESULTS_DIR}/{operation_type}/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+        result = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
+        benchmark = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+    benchmark:
+        "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     run:
         module = f"scripts.unary.{wildcards.library}.{wildcards.operation}"
 
@@ -36,6 +38,8 @@ rule unary_shell:
     output:
         result = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+    benchmark:
+        "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     run:
         script = f"scripts/unary/{wildcards.library}/{wildcards.operation}"
         write_output_cmd = f" | tail > {output.result}"
@@ -62,6 +66,8 @@ rule unary_r:
     output:
         result = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+    benchmark:
+        "{RESULTS_DIR}/unary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     run:
         script = f"scripts/unary/{wildcards.library}/{wildcards.operation}"
         cmd = f"Rscript {script}.R {input[0]} {output.result}"

@@ -16,6 +16,8 @@ rule binary_python:
     wildcard_constraints:
         library = "|".join([k for k, v in config["library_to_language"].items() if v == "py"]),
         operation = "|".join(binary_operations.Operation.drop_duplicates())
+    benchmark:
+        "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     output:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
@@ -50,6 +52,8 @@ rule binary_shell:
     output:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+    benchmark:
+        "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     run:
         script = f"scripts/binary/{wildcards.library}/{wildcards.operation}"
         write_output_cmd = f" | tail > {output.result}"
@@ -77,6 +81,8 @@ rule binary_r:
     output:
         result = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/result.txt",
         benchmark = "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/benchmark.json"
+    benchmark:
+        "{RESULTS_DIR}/binary/{operation}/{library}/{genome}/{nrows}/{maxlength}/snakemake_benchmark.jsonl"
     run:
         script = f"scripts/binary/{wildcards.library}/{wildcards.operation}"
         cmd = f"Rscript {script}.R {input.annotation} {input.bed_file} {output.result}"

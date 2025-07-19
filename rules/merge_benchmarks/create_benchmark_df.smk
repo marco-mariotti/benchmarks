@@ -10,7 +10,7 @@ rule create_benchmark_df:
     run:
         rowdicts = []
         for f in input:
-            f = Path(f).parent / "benchmark.json"
+            f = Path(f).parent / "benchmark.jsonl"
             print(f)
             text = json.loads(f.read_text())
             print(text)
