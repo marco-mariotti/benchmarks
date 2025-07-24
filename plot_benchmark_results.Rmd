@@ -175,10 +175,10 @@ print(avg_fold_changes)
 ```
 
 
-Concise plot: only maxlength==1000
+Concise plot: only maxlength==100
 
 ```{r fig.height=7, fig.width=6}
-sdf=mdf[maxlength==1000][status=='ok']
+sdf=mdf[maxlength==100][status=='ok']
 
 point_alpha=0.7
 named_color_scale = ggsci::pal_npg()(4)
